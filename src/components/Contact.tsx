@@ -239,15 +239,15 @@ const Contact = () => {
           <p className="text-gray-500 text-sm mb-4">Or connect directly:</p>
           <div className="flex justify-center gap-6 text-gray-400">
             <motion.a
-              href="mailto:hello@alkebulan.design"
+              href="mailto:belayneh.metaferya50@gmail.com"
               whileHover={{ color: 'var(--neon-blue)' }}
               className="hover:text-[var(--neon-blue)] transition-colors"
             >
-              hello@alkebulan.design
+              belayneh.metaferya50@gmail.com
             </motion.a>
             <span className="text-gray-700">|</span>
             <motion.span whileHover={{ color: 'var(--neon-blue)' }} className="hover:text-[var(--neon-blue)] transition-colors cursor-pointer">
-              +254 700 000 000
+              +251 929 011 773
             </motion.span>
           </div>
         </motion.div>

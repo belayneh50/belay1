@@ -107,15 +107,15 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-3 text-gray-400 text-sm">
                 <MapPin className="w-4 h-4 text-[var(--neon-blue)]" />
-                <span>Nairobi, Kenya</span>
+                <span>Addis Ababa, Ethiopia</span>
               </div>
               <div className="flex items-center gap-3 text-gray-400 text-sm">
                 <Mail className="w-4 h-4 text-[var(--neon-blue)]" />
-                <span>hello@alkebulan.design</span>
+                <span>belayneh.metaferya50@gmail.com</span>
               </div>
               <div className="flex items-center gap-3 text-gray-400 text-sm">
                 <Phone className="w-4 h-4 text-[var(--neon-blue)]" />
-                <span>+254 700 000 000</span>
+                <span>+251 929 011 773</span>
               </div>
             </div>
           </motion.div>
