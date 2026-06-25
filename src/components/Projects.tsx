@@ -89,75 +89,75 @@ const Projects = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => (
-            <motion.div
+            <Link
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="group relative"
+              to={project.link}
+              className="block group relative"
             >
-              <div className="relative overflow-hidden rounded-xl border border-gray-800 bg-black/50 hover:border-[var(--neon-blue)]/50 transition-all duration-500">
-                {/* Image */}
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="h-full"
+              >
+                <div className="relative overflow-hidden rounded-xl border border-gray-800 bg-black/50 hover:border-[var(--neon-blue)]/50 transition-all duration-500 h-full flex flex-col cursor-pointer">
+                  {/* Image */}
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
 
-                  {/* Icon Overlay */}
-                  <div className="absolute top-4 right-4 w-12 h-12 rounded-lg bg-black/80 backdrop-blur-sm flex items-center justify-center text-[var(--neon-blue)] border border-[var(--neon-blue)]/30">
-                    {project.icon}
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-[var(--neon-blue)] transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                    {project.description}
-                  </p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag, tagIndex) => (
-                      <span
-                        key={tagIndex}
-                        className="px-3 py-1 text-xs bg-gray-900 border border-gray-700 rounded-full text-gray-300"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                    {/* Icon Overlay */}
+                    <div className="absolute top-4 right-4 w-12 h-12 rounded-lg bg-black/80 backdrop-blur-sm flex items-center justify-center text-[var(--neon-blue)] border border-[var(--neon-blue)]/30">
+                      {project.icon}
+                    </div>
                   </div>
 
-                  {/* Links */}
-                  <div className="flex items-center gap-4 pt-4 border-t border-gray-800">
-                    <Link to={project.link}>
+                  {/* Content */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-[var(--neon-blue)] transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-4 leading-relaxed flex-1">
+                      {project.description}
+                    </p>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.tags.map((tag, tagIndex) => (
+                        <span
+                          key={tagIndex}
+                          className="px-3 py-1 text-xs bg-gray-900 border border-gray-700 rounded-full text-gray-300"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Links */}
+                    <div className="flex items-center gap-4 pt-4 border-t border-gray-800">
                       <motion.span
                         whileHover={{ scale: 1.1 }}
-                        className="text-gray-400 hover:text-[var(--neon-blue)] transition-colors cursor-pointer inline-block"
+                        className="text-gray-400 group-hover:text-[var(--neon-blue)] transition-colors"
                       >
                         <ExternalLink className="w-5 h-5" />
                       </motion.span>
-                    </Link>
-                    <motion.span
-                      whileHover={{ scale: 1.1 }}
-                      className="text-gray-400 hover:text-[var(--neon-blue)] transition-colors cursor-pointer"
-                    >
-                      <Github className="w-5 h-5" />
-                    </motion.span>
+                      <span className="text-gray-400 group-hover:text-[var(--neon-blue)] transition-colors">
+                        <Github className="w-5 h-5" />
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Hover Glow Effect */}
+                  <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[var(--neon-blue)]/10 via-transparent to-[var(--neon-red)]/10" />
                   </div>
                 </div>
-
-                {/* Hover Glow Effect */}
-                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[var(--neon-blue)]/10 via-transparent to-[var(--neon-red)]/10" />
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </div>
 
