@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { ExternalLink, Github, Cpu, Globe, Code2, Zap, Shield, Database, Cloud } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ExternalLink, Github, Cpu, Code2, Zap, Shield, Database, Cloud } from 'lucide-react';
 
 const Projects = () => {
   const [ref, inView] = useInView({
@@ -16,7 +17,7 @@ const Projects = () => {
       icon: <Cpu className="w-6 h-6" />,
       image: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&q=80&w=800",
       tags: ["React", "Python", "TensorFlow"],
-      link: "#"
+      link: "/projects/cybernetic-systems"
     },
     {
       title: "Neural Interface",
@@ -24,7 +25,7 @@ const Projects = () => {
       icon: <Code2 className="w-6 h-6" />,
       image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800",
       tags: ["Next.js", "PyTorch", "D3.js"],
-      link: "#"
+      link: "/projects/neural-interface"
     },
     {
       title: "Quantum Web",
@@ -32,7 +33,7 @@ const Projects = () => {
       icon: <Zap className="w-6 h-6" />,
       image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
       tags: ["TypeScript", "Node.js", "PostgreSQL"],
-      link: "#"
+      link: "/projects/quantum-web"
     },
     {
       title: "Digital Fortress",
@@ -40,7 +41,7 @@ const Projects = () => {
       icon: <Shield className="w-6 h-6" />,
       image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
       tags: ["Go", "Kubernetes", "Redis"],
-      link: "#"
+      link: "/projects/digital-fortress"
     },
     {
       title: "Data Nexus",
@@ -48,7 +49,7 @@ const Projects = () => {
       icon: <Database className="w-6 h-6" />,
       image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
       tags: ["Apache Kafka", "ClickHouse", "React"],
-      link: "#"
+      link: "/projects/data-nexus"
     },
     {
       title: "Cloud Command",
@@ -56,7 +57,7 @@ const Projects = () => {
       icon: <Cloud className="w-6 h-6" />,
       image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800",
       tags: ["Terraform", "AWS", "Docker"],
-      link: "#"
+      link: "/projects/cloud-command"
     }
   ];
 
@@ -134,20 +135,20 @@ const Projects = () => {
 
                   {/* Links */}
                   <div className="flex items-center gap-4 pt-4 border-t border-gray-800">
-                    <motion.a
-                      href={project.link}
+                    <Link to={project.link}>
+                      <motion.span
+                        whileHover={{ scale: 1.1 }}
+                        className="text-gray-400 hover:text-[var(--neon-blue)] transition-colors cursor-pointer inline-block"
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </motion.span>
+                    </Link>
+                    <motion.span
                       whileHover={{ scale: 1.1 }}
-                      className="text-gray-400 hover:text-[var(--neon-blue)] transition-colors"
-                    >
-                      <ExternalLink className="w-5 h-5" />
-                    </motion.a>
-                    <motion.a
-                      href={project.link}
-                      whileHover={{ scale: 1.1 }}
-                      className="text-gray-400 hover:text-[var(--neon-blue)] transition-colors"
+                      className="text-gray-400 hover:text-[var(--neon-blue)] transition-colors cursor-pointer"
                     >
                       <Github className="w-5 h-5" />
-                    </motion.a>
+                    </motion.span>
                   </div>
                 </div>
 
