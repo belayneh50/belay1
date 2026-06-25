@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Cpu } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,22 +17,41 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (isHomePage && location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [location, isHomePage]);
+
   const navItems = [
-    { name: 'HOME', href: '#home' },
-    { name: 'ABOUT', href: '#about' },
-    { name: 'SERVICES', href: '#services' },
-    { name: 'SKILLS', href: '#skills' },
-    { name: 'PROJECTS', href: '#projects' },
-    { name: 'TESTIMONIALS', href: '#testimonials' },
-    { name: 'CONTACT', href: '#contact' },
+    { name: 'HOME', href: '/#home' },
+    { name: 'ABOUT', href: '/#about' },
+    { name: 'SERVICES', href: '/#services' },
+    { name: 'SKILLS', href: '/#skills' },
+    { name: 'PROJECTS', href: '/#projects' },
+    { name: 'TESTIMONIALS', href: '/#testimonials' },
+    { name: 'CONTACT', href: '/#contact' },
   ];
 
   const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
+    const hash = href.replace('/', '');
+    const element = document.querySelector(hash);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsOpen(false);
+  };
+
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    if (isHomePage) {
+      e.preventDefault();
+      scrollToSection(href);
+    }
   };
 
   return (
@@ -38,35 +60,40 @@ const Navigation = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled ? 'bg-black/90 backdrop-blur-md border-b border-[var(--neon-blue)]/30' : 'bg-transparent'
+        scrolled || !isHomePage ? 'bg-black/90 backdrop-blur-md border-b border-[var(--neon-blue)]/30' : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <motion.div
-            className="flex items-center space-x-2 cursor-pointer"
-            whileHover={{ scale: 1.05 }}
-            onClick={() => scrollToSection('#home')}
-          >
-            <Cpu className="w-8 h-8 text-[var(--neon-blue)]" />
-            <span className="text-xl font-bold neon-text">ALKEBULAN</span>
-          </motion.div>
+          <Link to="/" className="block">
+            <motion.div
+              className="flex items-center space-x-2 cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+            >
+              <Cpu className="w-8 h-8 text-[var(--neon-blue)]" />
+              <span className="text-xl font-bold neon-text">ALKEBULAN</span>
+            </motion.div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item, index) => (
-              <motion.button
+              <Link
                 key={item.name}
-                onClick={() => scrollToSection(item.href)}
-                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-[var(--neon-blue)] transition-colors relative group"
-                whileHover={{ scale: 1.1 }}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                to={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
               >
-                {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--neon-blue)] group-hover:w-full transition-all duration-300" />
-              </motion.button>
+                <motion.span
+                  className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-[var(--neon-blue)] transition-colors relative group inline-block"
+                  whileHover={{ scale: 1.1 }}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  {item.name}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--neon-blue)] group-hover:w-full transition-all duration-300" />
+                </motion.span>
+              </Link>
             ))}
           </div>
 
@@ -92,16 +119,23 @@ const Navigation = () => {
           >
             <div className="px-4 py-4 space-y-2">
               {navItems.map((item, index) => (
-                <motion.button
+                <Link
                   key={item.name}
-                  onClick={() => scrollToSection(item.href)}
-                  className="block w-full text-left px-4 py-3 text-gray-300 hover:text-[var(--neon-blue)] hover:bg-[var(--neon-blue)]/10 rounded-lg transition-all"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
+                  to={item.href}
+                  onClick={(e) => {
+                    handleNavClick(e, item.href);
+                    setIsOpen(false);
+                  }}
                 >
-                  {item.name}
-                </motion.button>
+                  <motion.span
+                    className="block w-full text-left px-4 py-3 text-gray-300 hover:text-[var(--neon-blue)] hover:bg-[var(--neon-blue)]/10 rounded-lg transition-all"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    {item.name}
+                  </motion.span>
+                </Link>
               ))}
             </div>
           </motion.div>
