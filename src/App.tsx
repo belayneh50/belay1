@@ -21,6 +21,10 @@ import UIDesign from './pages/UIDesign';
 import DataSystems from './pages/DataSystems';
 import MobileSystems from './pages/MobileSystems';
 import CloudDeployment from './pages/CloudDeployment';
+import Innovation from './pages/Innovation';
+import Precision from './pages/Precision';
+import Speed from './pages/Speed';
+import Security from './pages/Security';
 
 const Home: React.FC = () => (
   <>
@@ -54,6 +58,10 @@ function App() {
           <Route path="/services/data-systems" element={<DataSystems />} />
           <Route path="/services/mobile-systems" element={<MobileSystems />} />
           <Route path="/services/cloud-deployment" element={<CloudDeployment />} />
+          <Route path="/values/innovation" element={<Innovation />} />
+          <Route path="/values/precision" element={<Precision />} />
+          <Route path="/values/speed" element={<Speed />} />
+          <Route path="/values/security" element={<Security />} />
         </Routes>
       </div>
     </Router>

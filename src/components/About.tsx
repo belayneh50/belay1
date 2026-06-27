@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 import { User, Target, Zap, Shield } from 'lucide-react';
 
 const About = () => {
@@ -10,10 +11,10 @@ const About = () => {
   });
 
   const features = [
-    { icon: <User className="w-6 h-6" />, title: 'INNOVATION', desc: 'Pushing boundaries' },
-    { icon: <Target className="w-6 h-6" />, title: 'PRECISION', desc: 'Pixel-perfect design' },
-    { icon: <Zap className="w-6 h-6" />, title: 'SPEED', desc: 'Lightning fast delivery' },
-    { icon: <Shield className="w-6 h-6" />, title: 'SECURITY', desc: 'Fortress-level protection' },
+    { icon: <User className="w-6 h-6" />, title: 'INNOVATION', desc: 'Pushing boundaries', link: '/values/innovation' },
+    { icon: <Target className="w-6 h-6" />, title: 'PRECISION', desc: 'Pixel-perfect design', link: '/values/precision' },
+    { icon: <Zap className="w-6 h-6" />, title: 'SPEED', desc: 'Lightning fast delivery', link: '/values/speed' },
+    { icon: <Shield className="w-6 h-6" />, title: 'SECURITY', desc: 'Fortress-level protection', link: '/values/security' },
   ];
 
   return (
@@ -84,19 +85,24 @@ const About = () => {
             {/* Feature Grid */}
             <div className="grid grid-cols-2 gap-4">
               {features.map((feature, index) => (
-                <motion.div
+                <Link
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-                  className="p-4 border border-[var(--neon-blue)]/30 rounded-lg bg-black/50 hover:border-[var(--neon-blue)] transition-all duration-300 group"
+                  to={feature.link}
+                  className="block"
                 >
-                  <div className="text-[var(--neon-blue)] mb-2 group-hover:scale-110 transition-transform">
-                    {feature.icon}
-                  </div>
-                  <h4 className="font-bold text-sm">{feature.title}</h4>
-                  <p className="text-xs text-gray-400">{feature.desc}</p>
-                </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={inView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+                    className="p-4 border border-[var(--neon-blue)]/30 rounded-lg bg-black/50 hover:border-[var(--neon-blue)] transition-all duration-300 group cursor-pointer h-full"
+                  >
+                    <div className="text-[var(--neon-blue)] mb-2 group-hover:scale-110 transition-transform">
+                      {feature.icon}
+                    </div>
+                    <h4 className="font-bold text-sm">{feature.title}</h4>
+                    <p className="text-xs text-gray-400">{feature.desc}</p>
+                  </motion.div>
+                </Link>
               ))}
             </div>
           </motion.div>
