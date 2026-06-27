@@ -15,6 +15,12 @@ import QuantumWeb from './pages/QuantumWeb';
 import DigitalFortress from './pages/DigitalFortress';
 import DataNexus from './pages/DataNexus';
 import CloudCommand from './pages/CloudCommand';
+import WebArchitecture from './pages/WebArchitecture';
+import AIIntegration from './pages/AIIntegration';
+import UIDesign from './pages/UIDesign';
+import DataSystems from './pages/DataSystems';
+import MobileSystems from './pages/MobileSystems';
+import CloudDeployment from './pages/CloudDeployment';
 
 const Home: React.FC = () => (
   <>
@@ -42,6 +48,12 @@ function App() {
           <Route path="/projects/digital-fortress" element={<DigitalFortress />} />
           <Route path="/projects/data-nexus" element={<DataNexus />} />
           <Route path="/projects/cloud-command" element={<CloudCommand />} />
+          <Route path="/services/web-architecture" element={<WebArchitecture />} />
+          <Route path="/services/ai-integration" element={<AIIntegration />} />
+          <Route path="/services/ui-design" element={<UIDesign />} />
+          <Route path="/services/data-systems" element={<DataSystems />} />
+          <Route path="/services/mobile-systems" element={<MobileSystems />} />
+          <Route path="/services/cloud-deployment" element={<CloudDeployment />} />
         </Routes>
       </div>
     </Router>
