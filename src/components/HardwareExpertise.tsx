@@ -12,7 +12,9 @@ import {
   Zap,
   Terminal,
   ShieldCheck,
+  ArrowRight,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const HardwareExpertise = () => {
   const [ref, inView] = useInView({
@@ -32,6 +34,7 @@ const HardwareExpertise = () => {
         'Custom liquid and air cooling solutions',
         'Stress testing and burn-in validation',
       ],
+      link: '/hardware/pc-assembly',
     },
     {
       icon: <Layers className="w-10 h-10" />,
@@ -44,6 +47,7 @@ const HardwareExpertise = () => {
         'RAID arrays for redundancy and throughput',
         'Driver provisioning and firmware tuning',
       ],
+      link: '/hardware/system-building',
     },
     {
       icon: <Gauge className="w-10 h-10" />,
@@ -56,6 +60,7 @@ const HardwareExpertise = () => {
         'Memory allocation and swap optimization',
         'Background service and telemetry reduction',
       ],
+      link: '/hardware/performance-optimization',
     },
   ];
 
@@ -134,6 +139,15 @@ const HardwareExpertise = () => {
                   </li>
                 ))}
               </ul>
+
+              {/* Learn More Link */}
+              <Link
+                to={pillar.link}
+                className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--neon-blue)] hover:gap-2.5 transition-all"
+              >
+                <span>Learn More</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
 
               {/* Hover glow */}
               <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">

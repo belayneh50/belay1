@@ -6,6 +6,9 @@ import About from './components/About';
 import Services from './components/Services';
 import Skills from './components/Skills';
 import HardwareExpertise from './components/HardwareExpertise';
+import PCAssembly from './pages/PCAssembly';
+import SystemBuilding from './pages/SystemBuilding';
+import PerformanceOptimization from './pages/PerformanceOptimization';
 import Projects from './components/Projects';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
@@ -64,6 +67,9 @@ function App() {
           <Route path="/values/precision" element={<Precision />} />
           <Route path="/values/speed" element={<Speed />} />
           <Route path="/values/security" element={<Security />} />
+          <Route path="/hardware/pc-assembly" element={<PCAssembly />} />
+          <Route path="/hardware/system-building" element={<SystemBuilding />} />
+          <Route path="/hardware/performance-optimization" element={<PerformanceOptimization />} />
         </Routes>
       </div>
     </Router>
