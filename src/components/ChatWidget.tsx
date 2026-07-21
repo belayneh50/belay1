@@ -57,23 +57,31 @@ const ChatWidget: React.FC = () => {
         body: { message: inputValue },
       });
 
-      if (error || !data || (data as { text?: string }).text === undefined) {
-        throw new Error('Invalid response from AI service');
+      console.log('chat response', { data, error });
+
+      const text = (data as { text?: string } | null)?.text;
+
+      if (error) {
+        throw error;
+      }
+
+      if (!text) {
+        throw new Error((data as { error?: string } | null)?.error ?? 'Empty response');
       }
 
       const botMessage: Message = {
         id: Date.now().toString(),
-        text: (data as { text: string }).text,
+        text,
         sender: 'bot',
         timestamp: new Date(),
       };
 
       setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
-      console.error('Error:', err);
+      console.error('Chat error:', err);
       const errorMessage: Message = {
         id: Date.now().toString(),
-        text: 'Error connecting to AI. Please try again or contact us directly.',
+        text: `Error: ${err instanceof Error ? err.message : 'Could not reach AI. Please contact us directly.'}`,
         sender: 'bot',
         timestamp: new Date(),
       };
