@@ -29,6 +29,7 @@ import Innovation from './pages/Innovation';
 import Precision from './pages/Precision';
 import Speed from './pages/Speed';
 import Security from './pages/Security';
+import ChatWidget from './components/ChatWidget';
 
 const Home: React.FC = () => (
   <>
@@ -71,6 +72,7 @@ function App() {
           <Route path="/hardware/system-building" element={<SystemBuilding />} />
           <Route path="/hardware/performance-optimization" element={<PerformanceOptimization />} />
         </Routes>
+        <ChatWidget />
       </div>
     </Router>
   );
