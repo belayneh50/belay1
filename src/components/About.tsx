@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom';
 import { User, Target, Zap, Shield } from 'lucide-react';
 
 const About = () => {
@@ -45,9 +44,9 @@ const About = () => {
             <div className="relative w-full aspect-square max-w-md mx-auto">
               <div className="absolute inset-0 bg-gradient-to-br from-[var(--neon-blue)] to-[var(--neon-red)] rounded-lg opacity-20 blur-xl" />
               <img
-                src="https://images.unsplash.com/photo-1485827404703-89b55fcc5950?auto=format&fit=crop&q=80&w=800"
-                alt="Alkebulan Designer"
-                className="relative w-full h-full object-cover rounded-lg neon-border"
+                src="/assets/alkebulan-emblem.png"
+                alt="Original Alkebulan emblem symbolizing knowledge, connection, and technological progress"
+                className="relative w-full h-full object-contain rounded-lg neon-border bg-black"
               />
               <motion.div
                 animate={{ rotate: 360 }}
@@ -85,9 +84,9 @@ const About = () => {
             {/* Feature Grid */}
             <div className="grid grid-cols-2 gap-4">
               {features.map((feature, index) => (
-                <Link
+                <a
                   key={index}
-                  to={feature.link}
+                  href={feature.link}
                   className="block"
                 >
                   <motion.div
@@ -102,7 +101,7 @@ const About = () => {
                     <h4 className="font-bold text-sm">{feature.title}</h4>
                     <p className="text-xs text-gray-400">{feature.desc}</p>
                   </motion.div>
-                </Link>
+                </a>
               ))}
             </div>
           </motion.div>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom';
 import { Globe, Cpu, Palette, Database, Smartphone, Cloud } from 'lucide-react';
 
 const Services = () => {
@@ -82,9 +81,9 @@ const Services = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => (
-            <Link
+            <a
               key={index}
-              to={service.link}
+              href={service.link}
               className="block group relative"
             >
               <motion.div
@@ -121,7 +120,7 @@ const Services = () => {
                   </div>
                 </div>
               </motion.div>
-            </Link>
+            </a>
           ))}
         </div>
       </div>
