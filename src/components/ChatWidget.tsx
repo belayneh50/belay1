@@ -113,7 +113,7 @@ const ChatWidget: React.FC = () => {
           aria-label="Open Alkebulan Assistant"
           aria-controls="alkebulan-chat-dialog"
           aria-expanded="false"
-          className="fixed bottom-24 right-4 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-cyan-400 text-black shadow-lg shadow-cyan-400/50 transition-all duration-300 hover:scale-105 hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black sm:bottom-6 sm:right-6"
+          className="fixed bottom-24 right-4 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-cyan-400 text-black shadow-lg shadow-cyan-400/50 transition-all duration-300 hover:scale-105 hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black sm:bottom-20 sm:right-6"
         >
           <MessageCircle size={24} aria-hidden="true" />
         </button>
@@ -125,7 +125,7 @@ const ChatWidget: React.FC = () => {
           role="dialog"
           aria-modal="false"
           aria-labelledby="alkebulan-chat-title"
-          className="fixed inset-x-3 bottom-24 z-[60] flex h-[min(34rem,calc(100dvh-8rem))] flex-col overflow-hidden rounded-lg border-2 border-cyan-400 bg-slate-900 shadow-2xl shadow-cyan-400/20 sm:inset-x-auto sm:bottom-6 sm:right-6 sm:h-[32rem] sm:w-96"
+          className="fixed inset-x-3 bottom-24 z-[60] flex h-[min(34rem,calc(100dvh-8rem))] flex-col overflow-hidden rounded-lg border-2 border-cyan-400 bg-slate-900 shadow-2xl shadow-cyan-400/20 sm:inset-x-auto sm:bottom-20 sm:right-6 sm:h-[32rem] sm:w-96"
           style={{ fontFamily: "Inter, 'Segoe UI', Arial, sans-serif" }}
         >
           <header className="flex items-center justify-between bg-gradient-to-r from-cyan-400 to-cyan-500 px-4 py-3 text-black">
