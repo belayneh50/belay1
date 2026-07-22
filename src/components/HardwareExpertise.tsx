@@ -14,7 +14,6 @@ import {
   ShieldCheck,
   ArrowRight,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const HardwareExpertise = () => {
   const [ref, inView] = useInView({
@@ -141,13 +140,13 @@ const HardwareExpertise = () => {
               </ul>
 
               {/* Learn More Link */}
-              <Link
-                to={pillar.link}
+              <a
+                href={pillar.link}
                 className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--neon-blue)] hover:gap-2.5 transition-all"
               >
                 <span>Learn More</span>
                 <ArrowRight className="w-4 h-4" />
-              </Link>
+              </a>
 
               {/* Hover glow */}
               <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">

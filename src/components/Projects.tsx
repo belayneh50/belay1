@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom';
-import { ExternalLink, Github, Cpu, Code2, Zap, Shield, Database, Cloud } from 'lucide-react';
+import { ArrowRight, Cpu, Code2, Zap, Shield, Database, Cloud } from 'lucide-react';
 
 const Projects = () => {
   const [ref, inView] = useInView({
@@ -76,7 +75,7 @@ const Projects = () => {
           transition={{ duration: 0.6 }}
           className="text-4xl font-bold mb-4 text-center neon-text"
         >
-          PROJECT ARCHIVES
+          CONCEPT LAB
         </motion.h2>
         <motion.p
           initial={{ opacity: 0 }}
@@ -84,14 +83,14 @@ const Projects = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-center text-gray-400 mb-16 max-w-2xl mx-auto"
         >
-          Classified digital operations successfully deployed across the network
+          Exploratory product concepts that demonstrate how I approach interfaces, systems, and emerging technology. These are concept builds, not client case studies.
         </motion.p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => (
-            <Link
+            <a
               key={index}
-              to={project.link}
+              href={project.link}
               className="block group relative"
             >
               <motion.div
@@ -109,6 +108,10 @@ const Projects = () => {
                       className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+
+                    <span className="absolute top-4 left-4 px-3 py-1 text-[10px] font-bold tracking-[0.18em] rounded-full bg-black/80 border border-[var(--neon-blue)]/40 text-[var(--neon-blue)]">
+                      CONCEPT BUILD
+                    </span>
 
                     {/* Icon Overlay */}
                     <div className="absolute top-4 right-4 w-12 h-12 rounded-lg bg-black/80 backdrop-blur-sm flex items-center justify-center text-[var(--neon-blue)] border border-[var(--neon-blue)]/30">
@@ -137,17 +140,9 @@ const Projects = () => {
                       ))}
                     </div>
 
-                    {/* Links */}
-                    <div className="flex items-center gap-4 pt-4 border-t border-gray-800">
-                      <motion.span
-                        whileHover={{ scale: 1.1 }}
-                        className="text-gray-400 group-hover:text-[var(--neon-blue)] transition-colors"
-                      >
-                        <ExternalLink className="w-5 h-5" />
-                      </motion.span>
-                      <span className="text-gray-400 group-hover:text-[var(--neon-blue)] transition-colors">
-                        <Github className="w-5 h-5" />
-                      </span>
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-800 text-sm font-medium text-gray-400 group-hover:text-[var(--neon-blue)] transition-colors">
+                      <span>EXPLORE CONCEPT</span>
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
 
@@ -157,24 +152,25 @@ const Projects = () => {
                   </div>
                 </div>
               </motion.div>
-            </Link>
+            </a>
           ))}
         </div>
 
-        {/* View All CTA */}
+        {/* Project CTA */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.8 }}
           className="text-center mt-12"
         >
-          <motion.button
+          <motion.a
+            href="#contact"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-3 rounded-lg border border-gray-700 text-gray-300 hover:border-[var(--neon-blue)] hover:text-[var(--neon-blue)] transition-all"
           >
-            VIEW ALL ARCHIVES
-          </motion.button>
+            START A REAL PROJECT
+          </motion.a>
         </motion.div>
       </div>
     </section>
