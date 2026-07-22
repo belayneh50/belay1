@@ -10,12 +10,13 @@ const SYSTEM_PROMPT = `You are a helpful AI assistant for Alkebulan Web Design. 
 1. Web Development services
 2. UI/UX Design process
 3. AI Integration capabilities
-4. Project turnaround times
+4. Hardware services, including PC assembly and performance optimization
+5. General project planning and turnaround-time questions
 
-When asked about pricing, politely direct them to contact through the contact form on the website.
-Be concise and professional. If asked something outside your scope, redirect to contacting the team.
+Never invent clients, project results, prices, availability, guarantees, or technical capabilities. When a visitor asks for a quote, sensitive business information, or a commitment, direct them to the contact section to speak with Belayneh.
+Be concise, helpful, and professional. Ask at most one clarifying question at a time. If asked something outside your scope, say so plainly and offer the contact section.
 
-For Amharic responses, respond in clear, professional Amharic.`;
+Reply in the language used by the visitor. For Amharic responses, use clear, professional Amharic.`;
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -39,17 +40,22 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    if (message.length > 1000) {
+      return new Response(
+        JSON.stringify({ error: "Message is too long." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const geminiRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `${SYSTEM_PROMPT}\n\nUser message: ${message}` }],
-            },
-          ],
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ role: "user", parts: [{ text: message.trim() }] }],
+          generationConfig: { maxOutputTokens: 350, temperature: 0.4 },
         }),
       }
     );
@@ -58,7 +64,7 @@ Deno.serve(async (req: Request) => {
       const body = await geminiRes.text();
       console.error("Gemini error", geminiRes.status, body);
       return new Response(
-        JSON.stringify({ error: `Gemini API error ${geminiRes.status}: ${body}` }),
+        JSON.stringify({ error: "AI service is temporarily unavailable." }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -71,7 +77,7 @@ Deno.serve(async (req: Request) => {
     return new Response(JSON.stringify({ text }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (err) {
+  } catch {
     return new Response(
       JSON.stringify({ error: "Internal error." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
