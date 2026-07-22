@@ -222,6 +222,12 @@ const ChatWidget: React.FC = () => {
               type="text"
               value={inputValue}
               onChange={(event) => setInputValue(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                  event.preventDefault();
+                  event.currentTarget.form?.requestSubmit();
+                }
+              }}
               placeholder="Ask about a service or project..."
               autoComplete="off"
               maxLength={1000}
