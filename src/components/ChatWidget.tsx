@@ -1,238 +1,176 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, MessageCircle, Send, X } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, X, MessageCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface Message {
   id: string;
   text: string;
   sender: 'user' | 'bot';
+  timestamp: Date;
 }
-
-const initialMessages: Message[] = [
-  {
-    id: 'welcome-en',
-    text: 'Hi, I’m the Alkebulan Assistant. I can help you explore our services or prepare a project inquiry.',
-    sender: 'bot',
-  },
-  {
-    id: 'welcome-am',
-    text: 'እንኳን ደህና መጡ! ስለ አገልግሎቶቻችን ለማወቅ ወይም ስለ ፕሮጀክትዎ ለመወያየት ልረዳዎት እችላለሁ።',
-    sender: 'bot',
-  },
-];
 
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      text: 'Welcome to Alkebulan Web Design! How can we help you today?',
+      sender: 'bot',
+      timestamp: new Date(),
+    },
+    {
+      id: '2',
+      text: 'እንኳን ደህና መጡ! በአለከቡላን ድረ ገጽ ዲዛይን እንዴት ያግዝናችሁ ይችላሉ?',
+      sender: 'bot',
+      timestamp: new Date(),
+    },
+  ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const launcherRef = useRef<HTMLButtonElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
-    if (!isOpen) return;
+    scrollToBottom();
+  }, [messages]);
 
-    inputRef.current?.focus();
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
-        window.requestAnimationFrame(() => launcherRef.current?.focus());
-      }
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: inputValue,
+      sender: 'user',
+      timestamp: new Date(),
     };
 
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading]);
-
-  const closeChat = () => {
-    setIsOpen(false);
-    window.requestAnimationFrame(() => launcherRef.current?.focus());
-  };
-
-  const goToSection = (sectionId: 'services' | 'contact') => {
-    closeChat();
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const prepareProjectInquiry = () => {
-    setInputValue('I would like to discuss a project. ');
-    inputRef.current?.focus();
-  };
-
-  const handleSendMessage = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const messageText = inputValue.trim();
-    if (!messageText || isLoading) return;
-
-    setMessages((previous) => [
-      ...previous,
-      { id: `user-${Date.now()}`, text: messageText, sender: 'user' },
-    ]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
     setIsLoading(true);
 
     try {
       const { data, error } = await supabase.functions.invoke('chat', {
-        body: { message: messageText },
+        body: { message: inputValue },
       });
 
-      const responseText = (data as { text?: string } | null)?.text?.trim();
-      if (error || !responseText) throw new Error('Assistant unavailable');
+      console.log('chat response', { data, error });
 
-      setMessages((previous) => [
-        ...previous,
-        { id: `bot-${Date.now()}`, text: responseText, sender: 'bot' },
-      ]);
-    } catch (error) {
-      console.error('Chat request failed', error);
-      setMessages((previous) => [
-        ...previous,
-        {
-          id: `error-${Date.now()}`,
-          text: 'I’m temporarily unavailable. You can still use the contact section to reach Belayneh directly.',
-          sender: 'bot',
-        },
-      ]);
+      const text = (data as { text?: string } | null)?.text;
+
+      if (error) {
+        throw error;
+      }
+
+      if (!text) {
+        throw new Error((data as { error?: string } | null)?.error ?? 'Empty response');
+      }
+
+      const botMessage: Message = {
+        id: Date.now().toString(),
+        text,
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (err) {
+      console.error('Chat error:', err);
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        text: `Error: ${err instanceof Error ? err.message : 'Could not reach AI. Please contact us directly.'}`,
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <>
+    <div className="fixed bottom-4 right-4 z-50 font-sans">
       {!isOpen && (
         <button
-          ref={launcherRef}
-          type="button"
           onClick={() => setIsOpen(true)}
-          aria-label="Open Alkebulan Assistant"
-          aria-controls="alkebulan-chat-dialog"
-          aria-expanded="false"
-          className="fixed bottom-24 right-4 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-cyan-400 text-black shadow-lg shadow-cyan-400/50 transition-all duration-300 hover:scale-105 hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black sm:bottom-6 sm:right-6"
+          className="bg-cyan-400 hover:bg-cyan-500 text-black rounded-full p-4 shadow-lg shadow-cyan-400/50 transition-all duration-300 flex items-center justify-center"
         >
-          <MessageCircle size={24} aria-hidden="true" />
+          <MessageCircle size={24} />
         </button>
       )}
 
       {isOpen && (
-        <section
-          id="alkebulan-chat-dialog"
-          role="dialog"
-          aria-modal="false"
-          aria-labelledby="alkebulan-chat-title"
-          className="fixed inset-x-3 bottom-24 z-[60] flex h-[min(34rem,calc(100dvh-8rem))] flex-col overflow-hidden rounded-lg border-2 border-cyan-400 bg-slate-900 shadow-2xl shadow-cyan-400/20 sm:inset-x-auto sm:bottom-6 sm:right-6 sm:h-[32rem] sm:w-96"
-        >
-          <header className="flex items-center justify-between bg-gradient-to-r from-cyan-400 to-cyan-500 px-4 py-3 text-black">
+        <div className="w-96 h-96 bg-slate-900 border-2 border-cyan-400 rounded-lg shadow-2xl shadow-cyan-400/20 flex flex-col overflow-hidden">
+          <div className="bg-gradient-to-r from-cyan-400 to-cyan-500 text-black px-4 py-3 flex justify-between items-center">
             <div>
-              <h2 id="alkebulan-chat-title" className="text-sm font-bold">ALKEBULAN ASSISTANT</h2>
-              <p className="text-xs opacity-75">Ask about services or your project</p>
+              <h3 className="font-bold text-sm">ALKEBULAN AI</h3>
+              <p className="text-xs opacity-75">Online</p>
             </div>
             <button
-              type="button"
-              onClick={closeChat}
-              aria-label="Close Alkebulan Assistant"
-              className="rounded p-1 transition-colors hover:bg-black/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+              onClick={() => setIsOpen(false)}
+              className="hover:bg-black/20 p-1 rounded transition-colors"
             >
-              <X size={20} aria-hidden="true" />
+              <X size={20} />
             </button>
-          </header>
+          </div>
 
-          <div
-            className="flex-1 space-y-3 overflow-y-auto bg-slate-950 p-4"
-            role="log"
-            aria-live="polite"
-            aria-relevant="additions"
-          >
-            {messages.map((message) => (
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-950">
+            {messages.map((msg) => (
               <div
-                key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                key={msg.id}
+                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-lg px-4 py-2 text-sm leading-relaxed ${
-                    message.sender === 'user'
-                      ? 'rounded-br-none bg-cyan-500 text-black'
-                      : 'rounded-bl-none border border-cyan-400/60 bg-slate-800 text-cyan-100'
+                  className={`max-w-xs px-4 py-2 rounded-lg text-sm ${
+                    msg.sender === 'user'
+                      ? 'bg-cyan-500 text-black rounded-br-none'
+                      : 'bg-slate-800 text-cyan-300 border border-cyan-400 rounded-bl-none'
                   }`}
                 >
-                  {message.text}
+                  {msg.text}
                 </div>
               </div>
             ))}
-
-            {messages.length === initialMessages.length && (
-              <div className="grid gap-2 pt-1" aria-label="Suggested actions">
-                <button
-                  type="button"
-                  onClick={() => goToSection('services')}
-                  className="flex items-center justify-between rounded border border-cyan-400/50 bg-slate-900 px-3 py-2 text-left text-sm text-cyan-200 transition-colors hover:border-cyan-300 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-                >
-                  Explore services <ArrowRight size={15} aria-hidden="true" />
-                </button>
-                <button
-                  type="button"
-                  onClick={prepareProjectInquiry}
-                  className="flex items-center justify-between rounded border border-cyan-400/50 bg-slate-900 px-3 py-2 text-left text-sm text-cyan-200 transition-colors hover:border-cyan-300 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-                >
-                  Discuss my project <ArrowRight size={15} aria-hidden="true" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => goToSection('contact')}
-                  className="flex items-center justify-between rounded border border-cyan-400/50 bg-slate-900 px-3 py-2 text-left text-sm text-cyan-200 transition-colors hover:border-cyan-300 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-                >
-                  Contact Belayneh <ArrowRight size={15} aria-hidden="true" />
-                </button>
-              </div>
-            )}
-
             {isLoading && (
-              <div className="flex justify-start" aria-label="Assistant is responding">
-                <div className="flex gap-2 rounded-lg rounded-bl-none border border-cyan-400/60 bg-slate-800 px-4 py-3">
-                  {[0, 1, 2].map((delay) => (
-                    <span
-                      key={delay}
-                      className="h-2 w-2 animate-bounce rounded-full bg-cyan-400"
-                      style={{ animationDelay: `${delay * 0.1}s` }}
-                    />
-                  ))}
+              <div className="flex justify-start">
+                <div className="bg-slate-800 text-cyan-300 px-4 py-2 rounded-lg border border-cyan-400 rounded-bl-none">
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          <form onSubmit={handleSendMessage} className="flex gap-2 border-t border-cyan-400/30 bg-slate-900 p-3">
-            <label htmlFor="alkebulan-chat-input" className="sr-only">Message Alkebulan Assistant</label>
+          <form
+            onSubmit={handleSendMessage}
+            className="border-t border-cyan-400/30 p-3 bg-slate-900 flex gap-2"
+          >
             <input
-              ref={inputRef}
-              id="alkebulan-chat-input"
               type="text"
               value={inputValue}
-              onChange={(event) => setInputValue(event.target.value)}
-              placeholder="Ask about a service or project..."
-              autoComplete="off"
-              maxLength={1000}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Ask something..."
+              className="flex-1 bg-slate-800 text-cyan-300 border border-cyan-400/50 rounded px-3 py-2 text-sm placeholder-cyan-600 focus:outline-none focus:border-cyan-400"
               disabled={isLoading}
-              className="min-w-0 flex-1 rounded border border-cyan-400/50 bg-slate-800 px-3 py-2 text-sm text-cyan-100 placeholder-cyan-600 focus:border-cyan-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
             />
             <button
               type="submit"
-              disabled={isLoading || !inputValue.trim()}
-              aria-label="Send message"
-              className="flex items-center justify-center rounded bg-cyan-400 px-3 py-2 text-black transition-colors hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:bg-slate-600 disabled:text-slate-300"
+              disabled={isLoading}
+              className="bg-cyan-400 hover:bg-cyan-500 disabled:bg-gray-600 text-black rounded px-3 py-2 transition-colors flex items-center justify-center"
             >
-              <Send size={17} aria-hidden="true" />
+              <Send size={16} />
             </button>
           </form>
-        </section>
+        </div>
       )}
-    </>
+    </div>
   );
 };
 
