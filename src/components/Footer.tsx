@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Cpu, Github, Twitter, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import { Cpu, Github, Mail, MapPin, Phone } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -40,14 +40,15 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               {[
-                { icon: <Github className="w-5 h-5" />, href: '#' },
-                { icon: <Twitter className="w-5 h-5" />, href: '#' },
-                { icon: <Linkedin className="w-5 h-5" />, href: '#' },
-                { icon: <Mail className="w-5 h-5" />, href: '#' },
+                { icon: <Github className="w-5 h-5" />, href: 'https://github.com/belayneh50', label: 'GitHub' },
+                { icon: <Mail className="w-5 h-5" />, href: 'mailto:belayneh.metaferya50@gmail.com', label: 'Email' },
               ].map((social, index) => (
                 <motion.a
                   key={index}
                   href={social.href}
+                  aria-label={social.label}
+                  target={social.href.startsWith('http') ? '_blank' : undefined}
+                  rel={social.href.startsWith('http') ? 'noreferrer' : undefined}
                   whileHover={{ scale: 1.2, color: 'var(--neon-blue)' }}
                   className="text-gray-400 hover:text-[var(--neon-blue)] transition-colors"
                 >
@@ -109,14 +110,14 @@ const Footer = () => {
                 <MapPin className="w-4 h-4 text-[var(--neon-blue)]" />
                 <span>Addis Ababa, Ethiopia</span>
               </div>
-              <div className="flex items-center gap-3 text-gray-400 text-sm">
+              <a href="mailto:belayneh.metaferya50@gmail.com" className="flex items-center gap-3 text-gray-400 hover:text-[var(--neon-blue)] transition-colors text-sm">
                 <Mail className="w-4 h-4 text-[var(--neon-blue)]" />
                 <span>belayneh.metaferya50@gmail.com</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-400 text-sm">
+              </a>
+              <a href="tel:+251929011773" className="flex items-center gap-3 text-gray-400 hover:text-[var(--neon-blue)] transition-colors text-sm">
                 <Phone className="w-4 h-4 text-[var(--neon-blue)]" />
                 <span>+251 929 011 773</span>
-              </div>
+              </a>
             </div>
           </motion.div>
         </div>
@@ -126,10 +127,7 @@ const Footer = () => {
           <p className="text-gray-500 text-sm">
             &copy; {currentYear} Alkebulan Web Design. All rights reserved.
           </p>
-          <div className="flex gap-6 text-sm text-gray-500">
-            <a href="#" className="hover:text-[var(--neon-blue)] transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-[var(--neon-blue)] transition-colors">Terms of Service</a>
-          </div>
+          <p className="text-sm text-gray-500">Available for remote and Addis Ababa-based projects.</p>
         </div>
       </div>
 
