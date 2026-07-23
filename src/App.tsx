@@ -30,6 +30,7 @@ import Precision from './pages/Precision';
 import Speed from './pages/Speed';
 import Security from './pages/Security';
 import ChatWidget from './components/ChatWidget';
+import EthiopianCalendar from './components/EthiopianCalendar';
 
 const Home: React.FC = () => (
   <>
@@ -41,6 +42,7 @@ const Home: React.FC = () => (
     <Projects />
     <Testimonials />
     <Contact />
+    <EthiopianCalendar />
     <Footer />
   </>
 );
