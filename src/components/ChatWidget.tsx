@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, MessageCircle, Send, X } from 'lucide-react';
+import { ArrowRight, Bot, Check, Copy, Languages, MessageCircle, Send, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface Message {
@@ -8,7 +8,9 @@ interface Message {
   sender: 'user' | 'bot';
 }
 
-const initialMessages: Message[] = [
+type ChatMode = 'assistant' | 'translator';
+
+const assistantMessages: Message[] = [
   {
     id: 'welcome-en',
     text: 'Hi, I’m the Alkebulan Assistant. I can help you explore our services or prepare a project inquiry.',
@@ -21,11 +23,26 @@ const initialMessages: Message[] = [
   },
 ];
 
+const translatorMessages: Message[] = [
+  {
+    id: 'translator-welcome-en',
+    text: 'Amharic ↔ English Translator\nType or paste text below. I’ll detect the language and translate it automatically.',
+    sender: 'bot',
+  },
+  {
+    id: 'translator-welcome-am',
+    text: 'የአማርኛ ↔ እንግሊዝኛ ተርጓሚ\nጽሑፍዎን ከታች ያስገቡ። ቋንቋውን ለይቼ በራስ-ሰር እተረጉማለሁ።',
+    sender: 'bot',
+  },
+];
+
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [mode, setMode] = useState<ChatMode>('assistant');
+  const [messages, setMessages] = useState<Message[]>(assistantMessages);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
@@ -64,6 +81,24 @@ const ChatWidget: React.FC = () => {
     inputRef.current?.focus();
   };
 
+  const changeMode = (nextMode: ChatMode) => {
+    if (nextMode === mode || isLoading) return;
+    setMode(nextMode);
+    setMessages(nextMode === 'assistant' ? assistantMessages : translatorMessages);
+    setInputValue('');
+    window.requestAnimationFrame(() => inputRef.current?.focus());
+  };
+
+  const copyMessage = async (message: Message) => {
+    try {
+      await navigator.clipboard.writeText(message.text);
+      setCopiedMessageId(message.id);
+      window.setTimeout(() => setCopiedMessageId(null), 1600);
+    } catch (error) {
+      console.error('Could not copy translation', error);
+    }
+  };
+
   const handleSendMessage = async (event: React.FormEvent) => {
     event.preventDefault();
     const messageText = inputValue.trim();
@@ -78,7 +113,7 @@ const ChatWidget: React.FC = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('chat', {
-        body: { message: messageText },
+        body: { message: messageText, mode },
       });
 
       const responseText = (data as { text?: string } | null)?.text?.trim();
@@ -94,7 +129,10 @@ const ChatWidget: React.FC = () => {
         ...previous,
         {
           id: `error-${Date.now()}`,
-          text: 'I’m temporarily unavailable. You can still use the contact section to reach Belayneh directly.',
+          text:
+            mode === 'translator'
+              ? 'Translation is temporarily unavailable. Please try again shortly.'
+              : 'I’m temporarily unavailable. You can still use the contact section to reach Belayneh directly.',
           sender: 'bot',
         },
       ]);
@@ -137,7 +175,9 @@ const ChatWidget: React.FC = () => {
               >
                 ALKEBULAN ASSISTANT
               </h2>
-              <p className="text-xs opacity-75">Ask about services or your project</p>
+              <p className="text-xs opacity-75">
+                {mode === 'translator' ? 'Amharic ↔ English translation' : 'Ask about services or your project'}
+              </p>
             </div>
             <button
               type="button"
@@ -148,6 +188,31 @@ const ChatWidget: React.FC = () => {
               <X size={20} aria-hidden="true" />
             </button>
           </header>
+
+          <div className="grid grid-cols-2 gap-1 border-b border-cyan-400/30 bg-slate-900 p-2" role="tablist" aria-label="Chat mode">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'assistant'}
+              onClick={() => changeMode('assistant')}
+              className={`flex items-center justify-center gap-2 rounded px-3 py-2 text-sm font-semibold transition-colors ${
+                mode === 'assistant' ? 'bg-cyan-400 text-black' : 'text-cyan-200 hover:bg-slate-800'
+              }`}
+            >
+              <Bot size={16} aria-hidden="true" /> Assistant
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'translator'}
+              onClick={() => changeMode('translator')}
+              className={`flex items-center justify-center gap-2 rounded px-3 py-2 text-sm font-semibold transition-colors ${
+                mode === 'translator' ? 'bg-cyan-400 text-black' : 'text-cyan-200 hover:bg-slate-800'
+              }`}
+            >
+              <Languages size={16} aria-hidden="true" /> Translator
+            </button>
+          </div>
 
           <div
             className="flex-1 space-y-3 overflow-y-auto bg-slate-950 p-4"
@@ -161,18 +226,28 @@ const ChatWidget: React.FC = () => {
                 className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-lg px-4 py-2 text-sm leading-relaxed ${
+                  className={`max-w-[85%] whitespace-pre-wrap rounded-lg px-4 py-2 text-sm leading-relaxed ${
                     message.sender === 'user'
                       ? 'rounded-br-none bg-cyan-500 text-black'
                       : 'rounded-bl-none border border-cyan-400/60 bg-slate-800 text-cyan-100'
                   }`}
                 >
                   {message.text}
+                  {mode === 'translator' && message.sender === 'bot' && !message.id.startsWith('translator-welcome') && (
+                    <button
+                      type="button"
+                      onClick={() => copyMessage(message)}
+                      aria-label="Copy translation"
+                      className="ml-2 inline-flex rounded p-1 align-middle text-cyan-300 transition-colors hover:bg-slate-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+                    >
+                      {copiedMessageId === message.id ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
 
-            {messages.length === initialMessages.length && (
+            {mode === 'assistant' && messages.length === assistantMessages.length && (
               <div className="grid gap-2 pt-1" aria-label="Suggested actions">
                 <button
                   type="button"
@@ -228,16 +303,16 @@ const ChatWidget: React.FC = () => {
                   event.currentTarget.form?.requestSubmit();
                 }
               }}
-              placeholder="Ask about a service or project..."
+              placeholder={mode === 'translator' ? 'Type Amharic or English text...' : 'Ask about a service or project...'}
               autoComplete="off"
-              maxLength={1000}
+              maxLength={2000}
               disabled={isLoading}
               className="min-w-0 flex-1 rounded border border-cyan-400/50 bg-slate-800 px-3 py-2 text-sm text-cyan-100 placeholder-cyan-600 focus:border-cyan-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
             />
             <button
               type="submit"
               disabled={isLoading || !inputValue.trim()}
-              aria-label="Send message"
+              aria-label={mode === 'translator' ? 'Translate text' : 'Send message'}
               className="flex items-center justify-center rounded bg-cyan-400 px-3 py-2 text-black transition-colors hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:bg-slate-600 disabled:text-slate-300"
             >
               <Send size={17} aria-hidden="true" />
