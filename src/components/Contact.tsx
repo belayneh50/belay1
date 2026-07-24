@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Send, Loader, CheckCircle, AlertCircle, Terminal } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+
+// Free, keyless email forwarding. Submissions are emailed to this address.
+const FORM_ENDPOINT = 'https://formsubmit.co/belayneh.metaferya50@gmail.com';
 
 interface FormData {
   name: string;
@@ -27,6 +29,7 @@ const Contact = () => {
   });
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const submittingRef = useRef(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
@@ -35,32 +38,21 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('loading');
+  // Native form POST to a hidden iframe. This avoids a CORS preflight
+  // (which Cloudflare-fronted form services reject), and needs no API key.
+  const handleSubmit = () => {
     setErrorMessage('');
+    setStatus('loading');
+    submittingRef.current = true;
+  };
 
-    try {
-      const { error } = await supabase
-        .from('contact_messages')
-        .insert([{
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message
-        }]);
-
-      if (error) throw error;
-
-      setStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
-
-      setTimeout(() => setStatus('idle'), 5000);
-    } catch {
-      setStatus('error');
-      setErrorMessage('Transmission failed. Please try again.');
-      setTimeout(() => setStatus('idle'), 5000);
-    }
+  // Fired when the hidden iframe finishes loading the endpoint's response.
+  const handleIframeLoad = () => {
+    if (!submittingRef.current) return;
+    submittingRef.current = false;
+    setStatus('success');
+    setFormData({ name: '', email: '', subject: '', message: '' });
+    setTimeout(() => setStatus('idle'), 6000);
   };
 
   const inputClasses = `w-full bg-black/50 backdrop-blur-sm border-2 border-gray-800 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--neon-blue)] focus:shadow-[0_0_20px_rgba(0,243,255,0.2)] transition-all duration-300`;
@@ -186,7 +178,7 @@ const Contact = () => {
                   className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/30 rounded-lg"
                 >
                   <CheckCircle className="w-5 h-5 text-green-400" />
-                  <span className="text-green-400">Transmission successful! We'll respond within 24 hours.</span>
+                  <span className="text-green-400">Transmission successful! We&apos;ll respond within 24 hours.</span>
                 </motion.div>
               )}
               {status === 'error' && (
@@ -228,29 +220,6 @@ const Contact = () => {
             </motion.button>
           </div>
         </motion.form>
-
-        {/* Alternative Contact Methods */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-12 text-center"
-        >
-          <p className="text-gray-500 text-sm mb-4">Or connect directly:</p>
-          <div className="flex justify-center gap-6 text-gray-400">
-            <motion.a
-              href="mailto:belayneh.metaferya50@gmail.com"
-              whileHover={{ color: 'var(--neon-blue)' }}
-              className="hover:text-[var(--neon-blue)] transition-colors"
-            >
-              belayneh.metaferya50@gmail.com
-            </motion.a>
-            <span className="text-gray-700">|</span>
-            <motion.span whileHover={{ color: 'var(--neon-blue)' }} className="hover:text-[var(--neon-blue)] transition-colors cursor-pointer">
-              +251 929 011 773
-            </motion.span>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

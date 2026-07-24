@@ -117,9 +117,9 @@ const EthiopianCalendar: React.FC = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6 }}
-        className="relative mx-auto max-w-4xl"
+        className="relative mx-auto max-w-md"
       >
-        <div className="relative overflow-hidden rounded-2xl border border-cyan-300/60 bg-slate-950/95 p-4 shadow-[0_0_35px_rgba(0,238,255,0.16)] sm:p-7">
+        <div className="relative overflow-hidden rounded-2xl border border-cyan-300/60 bg-slate-950/95 p-4 shadow-[0_0_35px_rgba(0,238,255,0.16)] sm:p-5">
           <img
             src="/assets/alkebulan-emblem-640.jpg"
             alt=""
@@ -137,7 +137,7 @@ const EthiopianCalendar: React.FC = () => {
               <CalendarDays className="h-5 w-5" aria-hidden="true" />
               <p className="text-sm font-semibold tracking-[0.22em]">የኢትዮጵያ ዘመን አቆጣጠር</p>
             </div>
-            <h2 id="ethiopian-calendar-title" className="text-3xl font-bold text-white sm:text-4xl">
+            <h2 id="ethiopian-calendar-title" className="text-2xl font-bold text-white sm:text-3xl">
               {ETHIOPIAN_MONTHS[view.month - 1]} {view.year} ዓ.ም.
             </h2>
             <p className="mt-2 text-sm text-slate-400">
@@ -197,7 +197,7 @@ const EthiopianCalendar: React.FC = () => {
                   role="gridcell"
                   aria-current={isToday ? 'date' : undefined}
                   aria-label={`${ETHIOPIAN_MONTHS[view.month - 1]} ${day}`}
-                  className={`flex aspect-square min-h-10 items-center justify-center rounded-lg border text-sm font-semibold transition sm:text-base ${
+                  className={`flex aspect-square min-h-8 items-center justify-center rounded-md border text-xs font-semibold transition sm:text-sm ${
                     isToday
                       ? 'border-cyan-200 bg-cyan-300 text-slate-950 shadow-[0_0_18px_rgba(0,238,255,0.65)]'
                       : 'border-slate-700/70 bg-slate-900/65 text-slate-100 hover:border-amber-300/70 hover:text-amber-200'
